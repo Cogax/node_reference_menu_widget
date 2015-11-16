@@ -18,22 +18,53 @@ function node_reference_menu_widget_field_widget_info() {
 }
 
 /**
+ * Implements hook_field_instance_settings_form().
+ */
+function node_reference_menu_widget_field_instance_settings_form($field, $instance) {
+  dpm($field, "field");
+  dpm($instance, "instance");
+}
+
+/**
  * Implements hook_field_settings_form().
  */
 function node_reference_menu_widget_field_settings_form($field, $instance, $has_data) {
-  dpm($field);
+  dpm($field, "field");
+}
+
+/**
+ * Implements hook_field_widget_info_alter().
+ */
+function node_reference_menu_widget_field_widget_info_alter(&$info) {
+  dpm($info);
 }
 
 /**
  * Implements hook_field_widget_form().
  */
 function node_reference_menu_widget_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-  //dpm($form, "form");
-  //dpm($form_state, "form_state");
-  //dpm($field, "field");
-  //dpm($instance, "instance");
-  //dpm($langcode, "langcode");
-  //dpm($items, "items");
-  //dpm($delta, "delta");
-  //dpm($element, "element");
+  $value = isset($items[$delta]['value']) ? $items[$delta]['value'] : '';
+  if($instance['widget']['type'] == 'node_reference_menu') {
+    $settings = $form_state['field'][$instance['field_name']][$langcode]['field']['settings'];
+    dpm($settings, 'settings');
+    dpm(menu_load_all());
+    $options = menu_parent_options(menu_get_menus(), array('mlid' => 0));
+    dpm($options, 'options');
+    //dpm($options);
+    $element += array(
+      '#type' => 'select',
+      '#default_value' => $value,
+      '#options' => $options,
+      '#attributes' => array('class' => array('menu-parent-select')),
+    );
+  }
+//  dpm($form, "form");
+//  dpm($form_state, "form_state");
+//  dpm($field, "field");
+//  dpm($instance, "instance");
+//  dpm($langcode, "langcode");
+//  dpm($items, "items");
+//  dpm($delta, "delta");
+//  dpm($element, "element");
+  return array('value' => $element);
 }
