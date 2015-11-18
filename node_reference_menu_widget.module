@@ -44,27 +44,43 @@ function node_reference_menu_widget_field_widget_info_alter(&$info) {
  */
 function node_reference_menu_widget_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
   $value = isset($items[$delta]['value']) ? $items[$delta]['value'] : '';
+
   if($instance['widget']['type'] == 'node_reference_menu') {
     $settings = $form_state['field'][$instance['field_name']][$langcode]['field']['settings'];
-    dpm($settings, 'settings');
-    dpm(menu_load_all());
-    $options = menu_parent_options(menu_get_menus(), array('mlid' => 0));
-    dpm($options, 'options');
-    //dpm($options);
+    $menu_links = menu_parent_options(menu_get_menus(), array('mlid' => 0));
+
+    $options = array();
+    foreach($menu_links as $menu_key => $menu_link_title) {
+      // Get the full menu_link dataset.
+      $menu_key = explode(':', $menu_key);
+      $mlid = $menu_key[1];
+      $menu_link = menu_link_load($mlid);
+
+      // Ff not a node link, the option is disabled.
+      if($menu_link['router_path'] != 'node/%') {
+        $options[$menu_link_title] = array();
+        continue;
+      }
+
+      // Load node entity metadata wrapper of linked node.
+      $nid = str_replace('node/', '',$menu_link['link_path']);
+      $node = entity_metadata_wrapper('node', $nid);
+
+      // Check if bundle is allowed to reference. If not, the option is
+      // disabled.
+      if(in_array($node->getBundle(), $settings['referenceable_types'])) {
+        $options[$node->nid->value()] = $menu_link_title;
+      } else {
+        $options[$menu_link_title] = array();
+      }
+    }
+
     $element += array(
       '#type' => 'select',
       '#default_value' => $value,
       '#options' => $options,
-      '#attributes' => array('class' => array('menu-parent-select')),
     );
   }
-//  dpm($form, "form");
-//  dpm($form_state, "form_state");
-//  dpm($field, "field");
-//  dpm($instance, "instance");
-//  dpm($langcode, "langcode");
-//  dpm($items, "items");
-//  dpm($delta, "delta");
-//  dpm($element, "element");
+
   return array('value' => $element);
 }
