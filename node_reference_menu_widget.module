@@ -56,7 +56,7 @@ function node_reference_menu_widget_field_widget_form(&$form, &$form_state, $fie
       $mlid = $menu_key[1];
       $menu_link = menu_link_load($mlid);
 
-      // Ff not a node link, the option is disabled.
+      // If not a node link, the option is disabled.
       if($menu_link['router_path'] != 'node/%') {
         $options[$menu_link_title] = array();
         continue;
