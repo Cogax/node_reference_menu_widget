@@ -1,6 +1,9 @@
 # Node Reference Menu Widget
 Drupal 7 module which allows to choose node references based on the menu structure.
 
+Example:
+![example](/node_reference_menu_widget.png)
+
 ## Contribute
 * Open Issue
 * Create Pull Request
