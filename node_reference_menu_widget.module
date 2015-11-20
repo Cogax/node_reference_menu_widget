@@ -68,7 +68,7 @@ function node_reference_menu_widget_field_widget_form(&$form, &$form_state, $fie
 
       // Check if bundle is allowed to reference. If not, the option is
       // disabled.
-      if(in_array($node->getBundle(), $settings['referenceable_types'])) {
+      if(in_array($node->getBundle(), $settings['referenceable_types'], TRUE)) {
         $options[$node->nid->value()] = $menu_link_title;
       } else {
         $options[$menu_link_title] = array();
