@@ -2,4 +2,5 @@ name = Node Reference Menu Widget
 description = Allows to choose Nodes based on the menu structure.
 package = Fields
 core = 7.x
+dependencies[] = references
 dependencies[] = node_reference
